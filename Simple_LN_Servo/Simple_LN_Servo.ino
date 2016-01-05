@@ -24,8 +24,8 @@ lnMsg        *LnPacket;
 
 uint8_t servo_pins[] = {9,10,16,14,15};
 uint8_t addresses[]   = {1,2,3,4,5};
-uint16_t maxs[] = {1700, 1600, 1280, 1720, 1920};
-uint16_t mins[] = {1380, 1080, 1720, 1280, 1550};
+uint16_t maxs[] = {1700, 1600, 1720, 1280, 1920}; // Turnout
+uint16_t mins[] = {1350, 1080, 1280, 1720, 1450}; // Straight
 
 class ServoSwitch {
   public:
@@ -66,6 +66,7 @@ void setup() {
     switches[i].changepin(servo_pins[i]);
     switches[i]._turnout = maxs[i];
     switches[i]._straight = mins[i];
+    switches[i].setDirection(0);
   }
   
   LocoNet.init(2); // TX on pin 2  
