@@ -40,6 +40,7 @@ class ServoSwitch : public ConfiguredPin {
     uint16_t _turnout;
     uint16_t _straight;
     uint16_t _speed;
+	uint8_t _powerpin;
     bool _state;
     Servo _servo;
   private:

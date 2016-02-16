@@ -1,10 +1,10 @@
 #include <configuredpins.h>
 #include <Arduino.h>
 #include <LocoNet.h>
-#ifndef DEBUG
+/*#ifndef DEBUG
 #define DEBUG(x)
 #endif
-
+*/
     InputPin::InputPin(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){pinMode(_pin, INPUT_PULLUP); state = 0; laststate = 1;};
     void InputPin::print() {DEBUG("Input pin ");DEBUG(_pin);DEBUG("\n");};
     void InputPin::update() {
@@ -21,10 +21,11 @@
     }
   
 ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){};
-ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed) :ConfiguredPin(confpin, pin, address) { 
+ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin) :ConfiguredPin(confpin, pin, address) { 
   _straight = pos1;
   _turnout = pos2;
   _speed = speed;
+  _powerpin = powerpin
   _servo.attach(pin);
   };
 
