@@ -32,6 +32,7 @@ ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_
 void ServoSwitch::changepin(uint8_t pin) {_servo.detach(); _pin = pin; _servo.attach(pin);};
 
 void ServoSwitch::set(bool dir, bool state) {
+	digitalWrite(_powerpin, HIGH);
   if (dir){
     _servo.writeMicroseconds(_turnout);
   } else {
@@ -42,6 +43,7 @@ void ServoSwitch::set(bool dir, bool state) {
 };
 
 void ServoSwitch::toggle() {
+	digitalWrite(_powerpin, HIGH);
   if (_state) {
     _servo.writeMicroseconds(_straight);
     _state = !_state;
@@ -52,6 +54,7 @@ void ServoSwitch::toggle() {
 };
 
 void ServoSwitch::update () {
+	digitalWrite(_powerpin, LOW);
 };
 
 void ServoSwitch::print(){
