@@ -30,7 +30,7 @@ class InputPin : public ConfiguredPin {
 class ServoSwitch : public ConfiguredPin {
   public:
     ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address);
-    ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed);
+    ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin);
     void changepin(uint8_t pin);
     void set(bool dir, bool state);
     void toggle();
