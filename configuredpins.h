@@ -11,6 +11,8 @@ class ConfiguredPin{
     virtual void set(bool port, bool state) {};
     virtual void print_state() {};
     virtual bool update() {return false;};
+	virtual void restore_state(uint16_t state) {};
+	virtual uint16_t get_state() {return 0;};
   public:
     uint8_t _pin;
     uint16_t _address;
@@ -37,7 +39,9 @@ class ServoSwitch : public ConfiguredPin {
     bool update ();
     void print();
     void print_state();
-    uint16_t _turnout;
+	void restore_state(uint16_t state);
+	uint16_t get_state();
+	uint16_t _turnout;
     uint16_t _straight;
     uint16_t _speed;
 	uint8_t _powerpin;

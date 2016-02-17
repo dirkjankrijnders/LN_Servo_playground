@@ -90,3 +90,11 @@ void ServoSwitch::print_state() {
   }
   DEBUG(_servo.read());
 };
+
+uint16_t ServoSwitch::get_state() {
+	return _state;
+}
+void ServoSwitch::restore_state(uint16_t state){
+	_state = state;
+	set(_state, 0);
+}

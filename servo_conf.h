@@ -14,7 +14,7 @@ typedef struct servo_conf {
 	uint16_t pos2;
 	uint16_t speed;
 	uint16_t reserved1;
-	uint16_t reserved2;
+	uint16_t state;
 } __attribute__((packed)) servo_conf_t;
 
 typedef struct led_conf {
@@ -23,6 +23,8 @@ typedef struct led_conf {
 	uint16_t value1;
 	uint16_t value2;
 	uint16_t function;
+	uint16_t reserved1;
+	uint16_t state;
 } __attribute__((packed)) led_conf_t;
 
 typedef struct input_conf {
