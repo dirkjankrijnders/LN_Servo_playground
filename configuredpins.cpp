@@ -7,7 +7,7 @@
 
     InputPin::InputPin(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){pinMode(_pin, INPUT_PULLUP); state = 0; laststate = 1;};
     void InputPin::print() {DEBUG("Input pin ");DEBUG(_pin);DEBUG("\n");};
-    void InputPin::update() {
+    bool InputPin::update() {
       state = digitalRead(_pin);
       //DEBUG(state);
       if (state != laststate) {
@@ -17,7 +17,9 @@
         DEBUG(" changed to ");
         DEBUG(state);
         laststate = state;
+		return true;
       }
+	  return false;
     }
   
 ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){};
@@ -27,34 +29,42 @@ ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_
   _speed = speed;
   _powerpin = powerpin;
   _servo.attach(pin);
+  
+  _currentpos = _straight;
+  _targetpos  = _currentpos;
+  _currentspeed = 0;
   };
 
 void ServoSwitch::changepin(uint8_t pin) {_servo.detach(); _pin = pin; _servo.attach(pin);};
 
 void ServoSwitch::set(bool dir, bool state) {
-	digitalWrite(_powerpin, HIGH);
+  digitalWrite(_powerpin, HIGH);
   if (dir){
-    _servo.writeMicroseconds(_turnout);
+	  _targetpos = _turnout;
   } else {
-    _servo.writeMicroseconds(_straight);
+	  _targetpos = _straight;
   }
+  if (_targetpos < _currentpos) {
+  	 _currentspeed = -1* _speed;
+ } else {
+	 _currentspeed = _speed;
+ }
   LocoNet.reportSwitch(_address);
   _state = dir;
 };
 
 void ServoSwitch::toggle() {
-	digitalWrite(_powerpin, HIGH);
-  if (_state) {
-    _servo.writeMicroseconds(_straight);
-    _state = !_state;
-  } else {
-    _servo.writeMicroseconds(_turnout);
-    _state = !_state;
-  }
+	set(!_state, 0);
 };
 
-void ServoSwitch::update () {
-	digitalWrite(_powerpin, LOW);
+bool ServoSwitch::update () {
+	if (abs(_currentpos - _targetpos) < abs(_currentspeed))
+		return false;
+	
+	_currentpos = _currentpos + _currentspeed;
+    _servo.writeMicroseconds(_currentpos);
+    
+	return true;
 };
 
 void ServoSwitch::print(){
