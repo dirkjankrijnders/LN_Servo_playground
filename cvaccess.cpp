@@ -1,6 +1,6 @@
 #include "cvaccess.h"
 #include <avr/eeprom.h>
-#include <arduino.h>
+#include <Arduino.h>
 
 const uint16_t cv2address(uint16_t cv){
 	uint16_t address = cv;
