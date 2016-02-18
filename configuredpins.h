@@ -28,7 +28,7 @@ class InputPin : public ConfiguredPin {
     bool state;
     bool laststate;
 };
-  
+
 class ServoSwitch : public ConfiguredPin {
   public:
     ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address);
@@ -47,11 +47,17 @@ class ServoSwitch : public ConfiguredPin {
 	uint8_t _powerpin;
     bool _state;
     Servo _servo;
+	typedef enum {
+		START = 0,
+		MOVE,
+		STOP
+	} states;
   private:
 	uint16_t _currentpos;
 	uint16_t _targetpos;
-	int16_t _currentspeed; 
+	int16_t _currentspeed;
 	uint8_t _currentdelay;
+  states _opstate;
 };
 
 #endif
