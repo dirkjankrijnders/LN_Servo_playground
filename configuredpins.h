@@ -51,6 +51,7 @@ class ServoSwitch : public ConfiguredPin {
 	uint16_t _currentpos;
 	uint16_t _targetpos;
 	int16_t _currentspeed; 
+	uint8_t _currentdelay;
 };
 
 #endif

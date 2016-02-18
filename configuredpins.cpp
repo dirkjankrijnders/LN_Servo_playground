@@ -33,6 +33,8 @@ ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_
   _currentpos = _straight;
   _targetpos  = _currentpos;
   _currentspeed = 0;
+  
+  _currentdelay = 0;
   };
 
 void ServoSwitch::changepin(uint8_t pin) {_servo.detach(); _pin = pin; _servo.attach(pin);};
@@ -61,9 +63,15 @@ bool ServoSwitch::update () {
 	if (abs(_currentpos - _targetpos) < abs(_currentspeed))
 		return false;
 	
-	_currentpos = _currentpos + _currentspeed;
-    _servo.writeMicroseconds(_currentpos);
-    
+	_currentdelay++;
+	if (_currentdelay > 250) {
+		DEBUG("Moving to");
+		_currentpos = _currentpos + _currentspeed;
+    	_servo.writeMicroseconds(_currentpos);
+		DEBUG(_currentpos);
+		DEBUG("\n");
+		_currentdelay = 0;
+	}
 	return true;
 };
 
