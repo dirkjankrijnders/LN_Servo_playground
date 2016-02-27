@@ -1,8 +1,8 @@
 #include <configuredpins.h>
 #include <Arduino.h>
-#include <LocoNet.h>
+
 #ifndef DEBUG
-#define DEBUG(x) Serial.print(x)
+#define DEBUG(x)
 #endif
 
     InputPin::InputPin(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){pinMode(_pin, INPUT_PULLUP); state = 0; laststate = 1;};
@@ -11,7 +11,7 @@
       state = digitalRead(_pin);
       //DEBUG(state);
       if (state != laststate) {
-        LocoNet.reportSensor(_address, state);
+        reportSensor(_address, state);
         DEBUG("State pin ");
         DEBUG(_pin);
         DEBUG(" changed to ");
@@ -51,7 +51,7 @@ void ServoSwitch::set(bool dir, bool state) {
  } else {
 	 _currentspeed = _speed;
  }
-  LocoNet.reportSwitch(_address);
+  reportSwitch(_address);
   _state = dir;
   _opstate = MOVE;
 };
@@ -73,18 +73,22 @@ bool ServoSwitch::update () {
 	_currentdelay++;
   if (_opstate == MOVE){
 	   if (_currentdelay > 250) {
-		     DEBUG("Moving to");
+		     //DEBUG("Moving to");
 		     _currentpos = _currentpos + _currentspeed;
     	   _servo.writeMicroseconds(_currentpos);
-		    DEBUG(_currentpos);
-		    DEBUG("\n");
+		    //DEBUG(_currentpos);
+		    //DEBUG("\n");
 		    _currentdelay = 0;
+        if (_currentspeed == 0 && (_targetpos == _currentpos)) {
+          _currentspeed = 1;
+        }
 	   }
      return true;
   }
   if (_opstate == START) {
     if (_currentdelay > 250) {
       _servo.attach(_pin);
+      DEBUG("Attached !\n");
       _opstate = STOP;
       return true;
     }
@@ -121,5 +125,13 @@ uint16_t ServoSwitch::get_state() {
 }
 void ServoSwitch::restore_state(uint16_t state){
 	_state = state;
-	set(_state, 0);
+  digitalWrite(_powerpin, HIGH);
+  if (_state) {
+    _targetpos = _turnout;
+  } else {
+    _targetpos = _straight;
+  }
+  _currentpos = _targetpos;
+  _currentspeed = 0;
+  _opstate = START;
 }

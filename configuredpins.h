@@ -3,6 +3,9 @@
 
 #include <Servo.h>
 
+extern void reportSwitch(uint16_t address);
+extern void reportSensor(uint16_t address, bool _state);
+
 class ConfiguredPin{
   public:
     ConfiguredPin(uint8_t confpin, uint8_t pin, uint16_t address) {_confpin = confpin; _pin = pin, _address = address;};
