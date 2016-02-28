@@ -3,7 +3,7 @@
 
 #include <Servo.h>
 
-extern void reportSwitch(uint16_t address, bool _state);
+extern void reportSwitch(uint16_t address, uint16_t _state);
 extern void reportSensor(uint16_t address, bool _state);
 
 class ConfiguredPin{
