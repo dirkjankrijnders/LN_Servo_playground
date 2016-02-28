@@ -51,7 +51,7 @@ void ServoSwitch::set(bool dir, bool state) {
  } else {
 	 _currentspeed = _speed;
  }
-  reportSwitch(_address);
+  reportSwitch(_address, 0);
   _state = dir;
   _opstate = MOVE;
 };
