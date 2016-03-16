@@ -29,10 +29,6 @@ uint8_t read_cv8(decoder_conf_t* CV, int16_t cv) {
 }
 
 uint16_t read_cv16(decoder_conf_t* CV, int16_t cv) {
-//	uint16_t add = &(CV->address)+(uint16_t)cv2address(cv);
-	Serial.print("Read_cv16: ");
-	Serial.println((uint16_t)&(CV->address)+cv2address(cv));
-	Serial.println(eeprom_read_word((uint16_t*)(&(CV->address)+(uint16_t)cv2address(cv))));
 	return eeprom_read_word((uint16_t*)(&(CV->address)+(uint16_t)cv2address(cv)));//&(CV->address)+cv2address(cv));
 }
 
