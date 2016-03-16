@@ -2,15 +2,16 @@
 #include <avr/eeprom.h>
 #include <Arduino.h>
 
+#define cvsPerPin 7
 const uint16_t cv2address(uint16_t cv){
 	uint16_t address = cv;
 	if (cv < 32) {
 		return cv-1;
 	} else {
 		cv -= 32;
-		uint8_t pin_conf = cv/7;
+		uint8_t pin_conf = cv/cvsPerPin;
 		
-		address = 31+(pin_conf*sizeof(conf_t)) + 2*(cv-(pin_conf*7));
+		address = 31+(pin_conf*sizeof(conf_t)) + 2*(cv-(pin_conf*cvsPerPin));
 	}
 	return address;
 }
