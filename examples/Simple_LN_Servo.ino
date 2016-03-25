@@ -32,7 +32,7 @@ class ServoSwitch {
     ServoSwitch() {};
     ServoSwitch(uint8_t pin) { _pin = pin; _servo.attach(pin);};
     void changepin(uint8_t pin) {_servo.detach(); _pin = pin; _servo.attach(pin);};
-    void SetDirection(bool dir) {
+    void setDirection(bool dir) {
       if (dir){
         _servo.writeMicroseconds(_turnout);
       } else {
@@ -154,11 +154,11 @@ void dumpPacket(UhlenbrockMsg & ub) {
 }
 void notifySwitchRequest( uint16_t Address, uint8_t Output, uint8_t Direction ) {
   if (Address == 1){
-    switches[0].SetDirection(Direction);
+    switches[0].setDirection(Direction);
   }
   for (uint8_t i =0 ; i < MAX ; i++) {
     if (addresses[i] == Address){
-      switches[i].SetDirection(Direction);
+      switches[i].setDirection(Direction);
     }
   }
   Serial.print("Switch Request: ");
