@@ -2,7 +2,7 @@
 #include <avr/eeprom.h>
 #include <Arduino.h>
 
-#define cvsPerPin 7
+#define cvsPerPin 10
 const uint16_t cv2address(uint16_t cv){
 	uint16_t address = cv;
 	if (cv < 32) {
@@ -25,7 +25,6 @@ uint8_t bytesizeCV(uint16_t cv) {
 
 #ifdef __AVR__
 uint8_t read_cv8(decoder_conf_t* CV, int16_t cv) {
-	uint8_t add = (uint16_t)&(CV->address)+cv2address(cv);
 	return eeprom_read_byte((uint8_t*)(&(CV->address)+cv2address(cv)));
 }
 
