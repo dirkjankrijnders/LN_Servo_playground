@@ -23,7 +23,7 @@
     }
 
 ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){};
-ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin) :ConfiguredPin(confpin, pin, address) {
+ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin, uint16_t fbslot1, uint16_t fbslot2) :ConfiguredPin(confpin, pin, address) {
   _straight = pos1;
   _turnout = pos2;
   _speed = speed;
@@ -31,6 +31,10 @@ ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_
 
   _currentpos = _straight;
   _targetpos  = _currentpos;
+  
+  _fbslot1 = fbslot1;
+  _fbslot2 = fbslot2;
+  
   _currentspeed = 0;
 
   _currentdelay = 0;
@@ -108,6 +112,12 @@ void ServoSwitch::print(){
   DEBUG(_address);
   DEBUG(" Speed: ");
   DEBUG(_speed);
+  
+  DEBUG(" Feedback slot 1: ");
+  DEBUG(_fbslot1);
+  DEBUG(" Feedback slot 2: ");
+  DEBUG(_fbslot2);
+  
   DEBUG("\n");
 };
 
