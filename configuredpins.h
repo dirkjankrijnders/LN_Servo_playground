@@ -36,7 +36,7 @@ class InputPin : public ConfiguredPin {
 class ServoSwitch : public ConfiguredPin {
   public:
     ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address);
-    ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin);
+    ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin, uint16_t fbslot1, uint16_t fbslot2);
     void changepin(uint8_t pin);
     void set(bool dir, bool state);
 	void set_pin_cv(uint8_t PinCv, uint16_t value);
@@ -50,6 +50,8 @@ class ServoSwitch : public ConfiguredPin {
     uint16_t _straight;
     uint16_t _speed;
 	uint8_t _powerpin;
+	uint16_t _fbslot1;
+	uint16_t _fbslot2;
     bool _state;
     Servo _servo;
 	typedef enum {
