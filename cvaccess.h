@@ -1,6 +1,11 @@
 #ifndef EEPROM_H
 #define EEPROM_H
 #include "decoder_conf.h"
+
+#define cvsPerPin 10
+#define cv2slot(x) (x - 32) / cvsPerPin;
+#define cv2slotcv(cv, slot) (cv -(slot * cvsPerPin)) -31
+
 const uint16_t cv2address(uint16_t cv);
 uint8_t bytesizeCV(uint16_t cv);
 uint8_t read_cv8(decoder_conf_t* CV, int16_t cv);
