@@ -57,7 +57,19 @@ void ServoSwitch::reportSwitch(){
 	  return false;
     }
 
-ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){};
+ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){
+	_straight = 1500;
+	_turnout = 1500;
+	_speed = 2;
+	_powerpin = 0;
+	_currentpos = 1500;
+	_targetpos = 1500;
+	_fbslot1 = 0;
+	_fbslot2 = 0;
+	_currentspeed = 0;
+	_currentdelay = 0;
+	_opstate = START;
+};
 ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin, uint16_t fbslot1, uint16_t fbslot2) :ConfiguredPin(confpin, pin, address) {
   _straight = pos1;
   _turnout = pos2;
