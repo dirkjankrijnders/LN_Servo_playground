@@ -5,6 +5,7 @@
 
 extern void reportSwitch(uint16_t address, uint16_t _state);
 extern void reportSensor(uint16_t address, bool _state);
+extern void reportSlot(uint16_t slot, uint16_t state);
 
 class ConfiguredPin{
   public:
@@ -52,6 +53,7 @@ class ServoSwitch : public ConfiguredPin {
 	uint16_t _fbslot2;
     bool _state;
     Servo _servo;
+	void reportSwitch();
 	typedef enum {
 		START = 0,
 		MOVE,

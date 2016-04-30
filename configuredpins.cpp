@@ -1,6 +1,41 @@
 #include <configuredpins.h>
 #include <Arduino.h>
 
+void ServoSwitch::reportSwitch(){
+#ifdef DS54
+	uint16_t address = confslot->address;
+	byte AddrH = ( (--address >> 7) & 0x0F ) | OPC_SW_REP_INPUTS  ;
+	byte AddrL = ( address) & 0x7F ;
+
+	if ( state == 0 )
+		AddrH |= OPC_SW_REP_SW  ;
+	if ( state == 1 )
+		AddrH |= OPC_SW_REP_HI  ;
+	if ( state == 2 )
+		AddrH |= OPC_SW_REP_HI | OPC_SW_REP_SW ;
+	
+	//LocoNet.send(OPC_SW_REP, AddrL, AddrH );
+#else
+	if ( _opstate == MOVE ) {
+		reportSlot(_fbslot1, 0);
+		reportSlot(_fbslot2, 0);
+		//LocoNet.reportSensor(Address, 0);
+		//LocoNet.reportSensor(Address+10, 0);
+	} else if( _state == 0 ) {
+		reportSlot(_fbslot1, 1);
+		reportSlot(_fbslot2, 0);
+		//LocoNet.reportSensor(Address, 1);
+		//LocoNet.reportSensor(Address+10, 0);		
+	} else if( _state == 1 ) {
+		reportSlot(_fbslot1, 0);
+		reportSlot(_fbslot2, 1);
+		//LocoNet.reportSensor(Address, 0);
+		//LocoNet.reportSensor(Address+10, 1);
+	}
+#endif
+}
+
+
 #ifndef DEBUG
 #define DEBUG(x)
 #endif
@@ -55,7 +90,7 @@ void ServoSwitch::set(bool dir, bool state) {
  } else {
 	 _currentspeed = _speed;
  }
-  reportSwitch(_address, 0);
+  reportSwitch();
   _state = dir;
   _opstate = MOVE;
 };
@@ -71,6 +106,7 @@ bool ServoSwitch::update () {
 
   if (abs(_currentpos - _targetpos) < abs(_currentspeed)){
     _opstate = STOP;
+	reportSwitch();
     return false;
   }
 
