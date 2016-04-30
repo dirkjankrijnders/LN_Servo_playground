@@ -27,10 +27,11 @@ class ConfiguredPin{
 class InputPin : public ConfiguredPin {
   public:
     InputPin(uint8_t confpin, uint8_t pin, uint16_t address);
+	void set(bool force, bool state);
     void print();
     bool update();
-    bool state;
-    bool laststate;
+    bool _state;
+    bool _laststate;
 };
 
 class ServoSwitch : public ConfiguredPin {

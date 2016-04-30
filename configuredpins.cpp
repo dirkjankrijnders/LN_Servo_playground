@@ -37,25 +37,38 @@ void ServoSwitch::reportSwitch(){
 
 
 #ifndef DEBUG
-#define DEBUG(x)
+#define DEBUG(x) Serial.print(x)
 #endif
 
-    InputPin::InputPin(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){pinMode(_pin, INPUT_PULLUP); state = 0; laststate = 1;};
+    InputPin::InputPin(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){
+		if (_pin > 15)
+			_pin = 15;
+		pinMode(_pin, INPUT_PULLUP);
+		_state = 0;
+		_laststate = 1;
+	};
     void InputPin::print() {DEBUG("Input pin ");DEBUG(_pin);DEBUG("\n");};
     bool InputPin::update() {
-      state = digitalRead(_pin);
+		if (_pin > 0)
+		  _state = digitalRead(_pin);
       //DEBUG(state);
-      if (state != laststate) {
-        reportSensor(_address, state);
+      if (_state != _laststate) {
+        reportSensor(_address, _state);
         DEBUG("State pin ");
         DEBUG(_pin);
         DEBUG(" changed to ");
-        DEBUG(state);
-        laststate = state;
+        DEBUG(_state);
+        _laststate = _state;
 		return true;
       }
 	  return false;
     }
+	void InputPin::set(bool force, bool state) {
+		if (force) {
+			_laststate = !state;
+		}
+		_state = state;
+	}
 
 ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){
 	_straight = 1500;
