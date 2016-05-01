@@ -229,3 +229,20 @@ void ServoSwitch::restore_state(uint16_t state){
   _currentspeed = 0;
   _opstate = START;
 }
+
+
+
+OutputPin::OutputPin(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){pinMode(_pin, OUTPUT); state = 0;};
+
+void OutputPin::print() {DEBUG("Output pin ");DEBUG(_pin);DEBUG("\n");};
+
+bool OutputPin::update() {return false;};
+
+void OutputPin::set(bool _state) {
+	state = _state;
+	digitalWrite(_pin, state);
+};
+
+void OutputPin::toggle() {
+	set(!state);
+};

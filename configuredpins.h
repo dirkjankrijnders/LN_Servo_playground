@@ -35,6 +35,16 @@ class InputPin : public ConfiguredPin {
     bool _laststate;
 };
 
+class OutputPin : public ConfiguredPin {
+public:
+    OutputPin(uint8_t confpin, uint8_t pin, uint16_t address);
+    void print();
+    bool update();
+    bool state;
+	void set(bool state);
+	void toggle();
+};
+
 class ServoSwitch : public ConfiguredPin {
   public:
     ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address);
