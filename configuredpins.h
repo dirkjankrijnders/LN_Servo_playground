@@ -41,7 +41,7 @@ public:
     void print();
     bool update();
     bool state;
-	void set(bool state);
+	void set(bool port, bool state);
 	void toggle();
 };
 

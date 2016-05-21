@@ -238,11 +238,11 @@ void OutputPin::print() {DEBUG("Output pin ");DEBUG(_pin);DEBUG("\n");};
 
 bool OutputPin::update() {return false;};
 
-void OutputPin::set(bool _state) {
-	state = _state;
+void OutputPin::set(bool port, bool _state) {
+	state = port;
 	digitalWrite(_pin, state);
 };
 
 void OutputPin::toggle() {
-	set(!state);
+	set(!state, 1);
 };
