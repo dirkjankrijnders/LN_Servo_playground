@@ -177,7 +177,7 @@ bool ServoSwitch::update () {
     if (_currentdelay > 250) {
       _servo.attach(_pin);
       DEBUG("Attached !\n");
-      _opstate = STOP;
+      _opstate = MOVE;
       return true;
     }
   }
