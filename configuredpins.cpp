@@ -229,3 +229,8 @@ void ServoSwitch::restore_state(uint16_t state){
   _currentspeed = 0;
   _opstate = START;
 }
+
+ServoSwitch::~ServoSwitch() {
+	DEBUG("Destructor!");
+	_servo.detach();
+}
