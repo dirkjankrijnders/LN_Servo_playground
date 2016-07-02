@@ -6,6 +6,7 @@
 extern void reportSwitch(uint16_t address, uint16_t _state);
 extern void reportSensor(uint16_t address, bool _state);
 extern void reportSlot(uint16_t slot, uint16_t state);
+extern void setSlot(uint16_t slot, uint16_t state);
 
 class ConfiguredPin{
   public:
@@ -34,6 +35,19 @@ class InputPin : public ConfiguredPin {
     bool update();
     bool _state;
     bool _laststate;
+};
+
+class OutputPin : public ConfiguredPin {
+public:
+    OutputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative = 0);
+    void print();
+    bool update();
+    bool state;
+	void set(bool port, bool state);
+	void toggle();
+private:
+  bool _cumulative;
+  uint8_t _accumulator;
 };
 
 class ServoSwitch : public ConfiguredPin {
