@@ -275,3 +275,51 @@ void OutputPin::set(bool port, bool _state) {
 void OutputPin::toggle() {
 	set(!state, 1);
 };
+
+DualAction::DualAction(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t actionslot1, uint16_t actionslot2, uint16_t delay, uint16_t options) : ConfiguredPin(confpin, pin, address){
+	_actionslot1 = actionslot1;
+	_actionslot2 = actionslot2;
+	_delay = delay;
+};
+
+void DualAction::set(bool port, bool _state) {
+	if (port == _portstate) // We're already in this state
+		return;
+	
+	if (_state != IDLE) // We're still busy, ignore command
+		return;
+			
+	_direc = port - _portstate; // If negative we're going in reverse
+	
+	if (_direc > 0) {
+		_state = FIRST;
+		setSlot(_actionslot1, 1);
+	} else {
+		_state = SECOND;
+		setSlot(_actionslot2, 0); // We're reversing, opposite state
+	}
+	_lastmilli = millis();
+}
+
+bool DualAction::update() {
+	if (_state == IDLE)
+		return false;
+	
+	if ((millis() - _lastmilli) > _delay) {
+		if (_direc > 0) {
+			if (_state == FIRST) 
+				setSlot(_actionslot2, 1);
+			else
+				setSlot(_actionslot1, 0);
+		}
+		_state = IDLE;
+	}
+	return true;
+}
+
+void DualAction::print() {DEBUG("Dual action slot ");DEBUG(_pin);DEBUG("\n");};
+
+void DualAction::toggle() {
+	set(!_state, 1);
+};
+

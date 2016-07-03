@@ -86,4 +86,26 @@ class ServoSwitch : public ConfiguredPin {
   states _opstate;
 };
 
+class DualAction : public ConfiguredPin {
+public:
+	DualAction(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t actionslot1, uint16_t actionslot2, uint16_t delay, uint16_t options);
+    void print();
+    bool update();
+    bool state;
+	void set(bool port, bool state);
+	void toggle();
+private:
+	uint8_t _actionslot1;
+	uint8_t _actionslot2;
+	uint16_t _delay;
+	uint32_t _lastmilli;
+	typedef enum {
+		IDLE = 0,
+		FIRST,
+		SECOND
+	} movestates;
+	movestates _state;
+	bool _portstate;
+	bool _direc;
+};
 #endif
