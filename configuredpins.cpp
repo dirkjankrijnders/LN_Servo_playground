@@ -280,24 +280,26 @@ DualAction::DualAction(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t 
 	_actionslot1 = actionslot1;
 	_actionslot2 = actionslot2;
 	_delay = delay;
+	_state = IDLE;
 };
 
-void DualAction::set(bool port, bool _state) {
+void DualAction::set(bool port, bool state) {
 	if (port == _portstate) // We're already in this state
 		return;
 	
 	if (_state != IDLE) // We're still busy, ignore command
 		return;
 			
-	_direc = port - _portstate; // If negative we're going in reverse
-	
+	_direc = port > _portstate; // If negative we're going in reverse
 	if (_direc > 0) {
 		_state = FIRST;
 		setSlot(_actionslot1, 1);
 	} else {
-		_state = SECOND;
+		_state = FIRST;
 		setSlot(_actionslot2, 0); // We're reversing, opposite state
 	}
+	if (state == 1)
+		_portstate = port;
 	_lastmilli = millis();
 }
 
@@ -311,13 +313,25 @@ bool DualAction::update() {
 				setSlot(_actionslot2, 1);
 			else
 				setSlot(_actionslot1, 0);
+		} else {
+			if (_state == FIRST) 
+				setSlot(_actionslot1, 0);
+			else
+				setSlot(_actionslot1, 0);
 		}
 		_state = IDLE;
 	}
 	return true;
 }
 
-void DualAction::print() {DEBUG("Dual action slot ");DEBUG(_pin);DEBUG("\n");};
+void DualAction::print() {
+	DEBUG("Dual action slot, address, ");DEBUG(_address);DEBUG("\n");
+	DEBUG("Triggering slots");
+	DEBUG(_actionslot1);
+	DEBUG(" ");
+	DEBUG(_actionslot2);
+	DEBUG("\n");
+};
 
 void DualAction::toggle() {
 	set(!_state, 1);
