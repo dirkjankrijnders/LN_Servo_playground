@@ -115,6 +115,7 @@ void ServoSwitch::set(bool dir, bool state) {
  } else {
 	 _currentspeed = _speed;
  }
+ setSlot(_powerpin, 1);
   reportSwitch();
   _state = dir;
   _opstate = MOVE;
@@ -154,7 +155,8 @@ bool ServoSwitch::update () {
 
   if (abs(_currentpos - _targetpos) < abs(_currentspeed)){
     _opstate = STOP;
-	reportSwitch();
+		setSlot(_powerpin, 0);
+		reportSwitch();
     return false;
   }
 
@@ -177,7 +179,7 @@ bool ServoSwitch::update () {
     if (_currentdelay > 250) {
       _servo.attach(_pin);
       DEBUG("Attached !\n");
-      _opstate = STOP;
+      _opstate = MOVE;
       return true;
     }
   }
@@ -201,7 +203,10 @@ void ServoSwitch::print(){
   DEBUG(_fbslot1);
   DEBUG(" Feedback slot 2: ");
   DEBUG(_fbslot2);
-  
+
+	DEBUG(" Power slot: ");
+  DEBUG(_powerpin);
+
   DEBUG("\n");
 };
 
@@ -229,3 +234,44 @@ void ServoSwitch::restore_state(uint16_t state){
   _currentspeed = 0;
   _opstate = START;
 }
+
+ServoSwitch::~ServoSwitch() {
+	DEBUG("Destructor!");
+	_servo.detach();
+}
+
+
+OutputPin::OutputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative) : ConfiguredPin(confpin, pin, address){
+	pinMode(_pin, OUTPUT);
+	state = 0;
+	_cumulative = cumulative;
+	_accumulator = 0;
+};
+
+void OutputPin::print() {DEBUG("Output pin ");DEBUG(_pin);DEBUG("\n");};
+
+bool OutputPin::update() {return false;};
+
+void OutputPin::set(bool port, bool _state) {
+	if (_cumulative) {
+		if (port) {
+			_accumulator++;
+		} else {
+			_accumulator--;
+		}
+		if (_accumulator <= 0) {
+			port = 0;
+			_accumulator = 0;
+		} else {
+			port = 1;
+		}
+	}
+	DEBUG("Acc: ");
+	DEBUG(_accumulator);
+	state = port;
+	digitalWrite(_pin, state);
+};
+
+void OutputPin::toggle() {
+	set(!state, 1);
+};

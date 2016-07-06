@@ -6,10 +6,12 @@
 extern void reportSwitch(uint16_t address, uint16_t _state);
 extern void reportSensor(uint16_t address, bool _state);
 extern void reportSlot(uint16_t slot, uint16_t state);
+extern void setSlot(uint16_t slot, uint16_t state);
 
 class ConfiguredPin{
   public:
     ConfiguredPin(uint8_t confpin, uint8_t pin, uint16_t address) {_confpin = confpin; _pin = pin, _address = address;};
+	virtual ~ConfiguredPin() {};
     virtual void print() {};
     virtual void toggle() {};
     virtual void set(bool port, bool state) {};
@@ -35,10 +37,24 @@ class InputPin : public ConfiguredPin {
     bool _laststate;
 };
 
+class OutputPin : public ConfiguredPin {
+public:
+    OutputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative = 0);
+    void print();
+    bool update();
+    bool state;
+	void set(bool port, bool state);
+	void toggle();
+private:
+  bool _cumulative;
+  uint8_t _accumulator;
+};
+
 class ServoSwitch : public ConfiguredPin {
   public:
     ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address);
     ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin, uint16_t fbslot1, uint16_t fbslot2);
+	~ServoSwitch();
     void changepin(uint8_t pin);
     void set(bool dir, bool state);
 	void set_pin_cv(uint8_t PinCv, uint16_t value);

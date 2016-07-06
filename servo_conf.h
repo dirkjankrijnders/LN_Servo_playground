@@ -17,7 +17,7 @@ typedef struct servo_conf {
 	uint16_t state;
 	uint16_t fbslot1;
 	uint16_t fbslot2;
-	uint16_t reserved2;
+	uint16_t pwrslot;
 } __attribute__((packed)) servo_conf_t;
 
 typedef struct led_conf {
@@ -36,10 +36,17 @@ typedef struct input_conf {
 	uint16_t func;
 } __attribute__((packed)) input_conf_t;
 
+typedef struct output_conf {
+	uint16_t arduinopin;
+	uint16_t address;
+	uint16_t options;
+}  __attribute__((packed)) output_conf_t;
+
 typedef union conf {
 	servo_conf_t servo;
 	led_conf_t led;
 	input_conf_t input;
+	output_conf_t output;
 } __attribute__((packed)) conf_t;
 
 
