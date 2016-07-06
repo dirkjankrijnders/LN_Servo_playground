@@ -40,13 +40,26 @@ typedef struct output_conf {
 	uint16_t arduinopin;
 	uint16_t address;
 	uint16_t options;
+	uint16_t fbslot1;
+	uint16_t fbslot2;
 }  __attribute__((packed)) output_conf_t;
+
+typedef struct dualaction_conf {
+	uint16_t arduinopin;
+	uint16_t address;
+	uint16_t actionslot1;
+	uint16_t actionslot2;
+	uint16_t delay;
+	uint16_t options;	
+	uint16_t state;
+}  __attribute__((packed)) dualaction_conf_t;
 
 typedef union conf {
 	servo_conf_t servo;
 	led_conf_t led;
 	input_conf_t input;
 	output_conf_t output;
+	dualaction_conf_t dualaction;
 } __attribute__((packed)) conf_t;
 
 
