@@ -121,10 +121,15 @@ void ServoSwitch::set(bool dir, bool state) {
   _opstate = MOVE;
 };
 
-void ServoSwitch::set_pin_cv(uint8_t PinCv, uint16_t value) {
+void ServoSwitch::set_pin_cv(uint16_t PinCv, uint16_t value) {
+	DEBUG("Setting ");
+	DEBUG(PinCv);
+	DEBUG(" to ");
+	DEBUG(value);
+	DEBUG("\n");
 	switch (PinCv) {
 		case 0: // Arduino Pin
-			_pin = value;
+			changepin(value);
 			break;
 		case 1: // Address
 			_address = value;
@@ -140,8 +145,17 @@ void ServoSwitch::set_pin_cv(uint8_t PinCv, uint16_t value) {
 		case 4: // Speed
 			_speed = value;
 			break;
+		case 7:
+			_fbslot1 = value;
+			break;
+		case 8:
+			_fbslot2 = value;
+			break;
+		case 9:
+			_powerpin = value;
+			break;
 	}
-	
+
 }
 
 void ServoSwitch::toggle() {

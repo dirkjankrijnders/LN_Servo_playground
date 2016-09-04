@@ -57,7 +57,7 @@ class ServoSwitch : public ConfiguredPin {
 	~ServoSwitch();
     void changepin(uint8_t pin);
     void set(bool dir, bool state);
-	void set_pin_cv(uint8_t PinCv, uint16_t value);
+	void set_pin_cv(uint16_t PinCv, uint16_t value);
     void toggle();
     bool update ();
     void print();
