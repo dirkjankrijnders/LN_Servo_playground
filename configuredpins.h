@@ -44,6 +44,7 @@ public:
     bool update();
     bool state;
 	void set(bool port, bool state);
+	void _set(bool state);
 	void toggle();
 private:
   bool _cumulative;
