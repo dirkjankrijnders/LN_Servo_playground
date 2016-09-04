@@ -4,7 +4,7 @@
 
 #define cvsPerPin 10
 #define cv2slot(x) (x - 32) / cvsPerPin;
-#define cv2slotcv(cv, slot) (cv -(slot * cvsPerPin)) -31
+#define cv2slotcv(cv, slot) (cv -(slot * cvsPerPin)) - 32
 
 const uint16_t cv2address(uint16_t cv);
 uint8_t bytesizeCV(uint16_t cv);
