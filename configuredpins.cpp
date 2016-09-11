@@ -1,5 +1,6 @@
 #include <configuredpins.h>
 #include <Arduino.h>
+#include "config.h"
 
 void ServoSwitch::reportSwitch(){
 #ifdef DS54
