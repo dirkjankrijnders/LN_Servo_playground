@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 
-const uint16_t cv2address(uint16_t cv){
+uint16_t cv2address(uint16_t cv){
 	uint16_t address = cv;
 	if (cv < 32) {
 		return cv-1;

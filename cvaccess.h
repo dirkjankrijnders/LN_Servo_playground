@@ -6,7 +6,7 @@
 #define cv2slot(x) (x - 32) / cvsPerPin;
 #define cv2slotcv(cv, slot) (cv -(slot * cvsPerPin)) - 32
 
-const uint16_t cv2address(uint16_t cv);
+uint16_t cv2address(uint16_t cv);
 uint8_t bytesizeCV(uint16_t cv);
 uint8_t read_cv8(decoder_conf_t* CV, int16_t cv);
 uint16_t read_cv16(decoder_conf_t* CV, int16_t cv);
