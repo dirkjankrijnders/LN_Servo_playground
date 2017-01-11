@@ -15,7 +15,7 @@ class ConfiguredPin{
     virtual void print() {};
     virtual void toggle() {};
     virtual void set(bool port, bool state) {};
-	virtual void _set(bool state);
+	virtual void _set(bool state) {};
 	virtual void set_pin_cv(uint16_t PinCv, uint16_t value) {};
     virtual void print_state() {};
     virtual bool update() {return false;};
