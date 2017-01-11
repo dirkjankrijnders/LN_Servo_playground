@@ -1,5 +1,6 @@
 #include <configuredpins.h>
 #include <Arduino.h>
+#include "config.h"
 
 void ServoSwitch::reportSwitch(){
 #ifdef DS54
@@ -269,6 +270,10 @@ void OutputPin::set(bool port, bool _state) {
 	DEBUG("Acc: ");
 	DEBUG(_accumulator);
 	state = port;
+	_set(state);
+};
+
+void OutputPin::_set(bool state) {
 	digitalWrite(_pin, state);
 };
 
