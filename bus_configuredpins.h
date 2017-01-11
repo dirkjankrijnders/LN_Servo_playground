@@ -1,4 +1,5 @@
 #include "configuredpins.h"
+#include "config.h"
 
 #include "Adafruit_TLC5947.h"
 
