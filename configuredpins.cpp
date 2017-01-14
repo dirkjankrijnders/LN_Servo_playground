@@ -105,7 +105,7 @@ ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_
 void ServoSwitch::changepin(uint8_t pin) {_servo.detach(); _pin = pin; _servo.attach(pin);};
 
 void ServoSwitch::set(bool dir, bool state) {
-  digitalWrite(_powerpin, HIGH);
+  //digitalWrite(_powerpin, HIGH);
   if (dir){
 	  _targetpos = _turnout;
   } else {
@@ -224,8 +224,9 @@ uint16_t ServoSwitch::get_state() {
 	return _state;
 }
 void ServoSwitch::restore_state(uint16_t state){
+//	set(state, 0);
 	_state = state;
-  digitalWrite(_powerpin, HIGH);
+ // digitalWrite(_powerpin, HIGH);
   if (_state) {
     _targetpos = _turnout;
   } else {
