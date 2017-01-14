@@ -49,7 +49,7 @@ public:
 	void toggle();
 private:
   bool _cumulative;
-  uint8_t _accumulator;
+  int8_t _accumulator;
 };
 
 class ServoSwitch : public ConfiguredPin {
