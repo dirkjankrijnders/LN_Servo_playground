@@ -246,6 +246,7 @@ ServoSwitch::~ServoSwitch() {
 OutputPin::OutputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative) : ConfiguredPin(confpin, pin, address){
 	pinMode(_pin, OUTPUT);
 	state = 0;
+	_set(state);
 	_cumulative = cumulative;
 	_accumulator = 0;
 };
