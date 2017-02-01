@@ -80,7 +80,7 @@ class ServoSwitch : public ConfiguredPin {
 		MOVE,
 		STOP
 	} states;
-  private:
+  protected:
 	uint16_t _currentpos;
 	uint16_t _targetpos;
 	int16_t _currentspeed;

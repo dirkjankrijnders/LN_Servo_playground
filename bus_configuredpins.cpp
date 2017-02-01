@@ -1,6 +1,7 @@
 #include "bus_configuredpins.h"
 
-TLC5947pin::TLC5947pin(Adafruit_TLC5947* _tlc, uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative, uint8_t _channel, uint16_t _intensity) : OutputPin(confpin, pin, address, cumulative), tlc(_tlc), intensity(_intensity), channel(_channel) {
+TLC5947pin::TLC5947pin(Adafruit_TLC5947* _tlc, uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative, uint8_t _channel, uint16_t _intensity) 
+	: OutputPin(confpin, pin, address, cumulative), tlc(_tlc), intensity(_intensity), channel(_channel) {
 };
 
 void TLC5947pin::_set(bool state) {
@@ -16,3 +17,50 @@ void TLC5947pin::print() {
 	DEBUG(" LN Address: ");
 	DEBUGLN(_address);
 }
+
+PCA9685Servo::PCA9685Servo(Adafruit_PWMServoDriver* _pca, uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin, uint16_t fbslot1, uint16_t fbslot2) 
+	: ServoSwitch(confpin, pin, address, pos1, pos2, speed, powerpin, fbslot1, fbslot2), pca(_pca) 
+{
+		
+};
+
+bool PCA9685Servo::update () {
+  if (_opstate == STOP ) {
+    return false;
+  }
+
+  if (abs(_currentpos - _targetpos) < abs(_currentspeed)){
+    _opstate = STOP;
+		setSlot(_powerpin, 0);
+		reportSwitch();
+    return false;
+  }
+
+	_currentdelay++;
+  if (_opstate == MOVE){
+	   if (_currentdelay > 250) {
+		     //DEBUG("Moving to");
+		     _currentpos = _currentpos + _currentspeed;
+    	   _servo.writeMicroseconds(_currentpos);
+		   _pca.
+		    //DEBUG(_currentpos);
+		    //DEBUG("\n");
+		    _currentdelay = 0;
+        if (_currentspeed == 0 && (_targetpos == _currentpos)) {
+          _currentspeed = 1;
+        }
+	   }
+     return true;
+  }
+  if (_opstate == START) {
+    if (_currentdelay > 250) {
+      _servo.attach(_pin);
+      DEBUG("Attached !\n");
+      _opstate = MOVE;
+      return true;
+    }
+  }
+  return false;
+};
+
+		
