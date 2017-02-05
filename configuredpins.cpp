@@ -102,7 +102,11 @@ ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_
   _opstate = START;
   };
 
-void ServoSwitch::changepin(uint8_t pin) {_servo.detach(); _pin = pin; _servo.attach(pin);};
+void ServoSwitch::changepin(uint8_t pin) {
+#if PINSERVO
+	_servo.detach(); _pin = pin; _servo.attach(pin);
+#endif //PINSERVO
+};
 
 void ServoSwitch::set(bool dir, bool state) {
   //digitalWrite(_powerpin, HIGH);
@@ -150,6 +154,7 @@ void ServoSwitch::toggle() {
 };
 
 bool ServoSwitch::update () {
+#if PINSERVO
   if (_opstate == STOP ) {
     return false;
   }
@@ -185,6 +190,7 @@ bool ServoSwitch::update () {
     }
   }
   return false;
+#endif //PINSERVO
 };
 
 void ServoSwitch::print(){
@@ -217,7 +223,9 @@ void ServoSwitch::print_state() {
   } else {
     DEBUG("Thrown");
   }
+#if PINSERVO
   DEBUG(_servo.read());
+#endif //PINSERVO
 };
 
 uint16_t ServoSwitch::get_state() {
@@ -239,7 +247,9 @@ void ServoSwitch::restore_state(uint16_t state){
 
 ServoSwitch::~ServoSwitch() {
 	DEBUG("Destructor!");
+#if PINSERVO
 	_servo.detach();
+#endif //PINSERVO
 }
 
 

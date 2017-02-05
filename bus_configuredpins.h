@@ -1,5 +1,7 @@
+#ifndef BUS_CONFIGUREDPINS_H
+#define BUS_CONFIGUREDPINS_H
+
 #include "configuredpins.h"
-#include "config.h"
 #include <Wire.h>
 
 #include <Adafruit_PWMServoDriver.h>
@@ -20,6 +22,9 @@ class PCA9685Servo : public ServoSwitch {
 	private:
 		Adafruit_PWMServoDriver* pca;
 	public:
-		PCA9685Servo(Adafruit_PWMServoDriver* _pca, uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin, uint16_t fbslot1, uint16_t fbslot2) ;
+		PCA9685Servo(Adafruit_PWMServoDriver* _pca, uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin, uint16_t fbslot1, uint16_t fbslot2);
 		bool update();
 	};
+	
+	
+#endif //BUS_CONFIGUREDPINS_H

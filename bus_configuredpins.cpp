@@ -1,5 +1,7 @@
 #include "bus_configuredpins.h"
 
+#define PULSELENGTH 1000/60/4096
+
 TLC5947pin::TLC5947pin(Adafruit_TLC5947* _tlc, uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative, uint8_t _channel, uint16_t _intensity) 
 	: OutputPin(confpin, pin, address, cumulative), tlc(_tlc), intensity(_intensity), channel(_channel) {
 };
@@ -19,9 +21,10 @@ void TLC5947pin::print() {
 }
 
 PCA9685Servo::PCA9685Servo(Adafruit_PWMServoDriver* _pca, uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin, uint16_t fbslot1, uint16_t fbslot2) 
-	: ServoSwitch(confpin, pin, address, pos1, pos2, speed, powerpin, fbslot1, fbslot2), pca(_pca) 
-{
-		
+: ServoSwitch(confpin, pin, address, pos1, pos2, speed, powerpin, fbslot1, fbslot2) {
+	// Convert microseconds to pca ticks. i.e. position / PULSELENGTH
+	pos1 = pos1 / PULSELENGTH;
+	pos2 = pos2 / PULSELENGTH;
 };
 
 bool PCA9685Servo::update () {
@@ -41,8 +44,8 @@ bool PCA9685Servo::update () {
 	   if (_currentdelay > 250) {
 		     //DEBUG("Moving to");
 		     _currentpos = _currentpos + _currentspeed;
-    	   _servo.writeMicroseconds(_currentpos);
-		   _pca.
+    	   //_servo.writeMicroseconds(_currentpos);
+		   //pca.
 		    //DEBUG(_currentpos);
 		    //DEBUG("\n");
 		    _currentdelay = 0;
@@ -54,7 +57,7 @@ bool PCA9685Servo::update () {
   }
   if (_opstate == START) {
     if (_currentdelay > 250) {
-      _servo.attach(_pin);
+      //_servo.attach(_pin);
       DEBUG("Attached !\n");
       _opstate = MOVE;
       return true;
