@@ -21,10 +21,10 @@ void TLC5947pin::print() {
 }
 
 PCA9685Servo::PCA9685Servo(Adafruit_PWMServoDriver* _pca, uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin, uint16_t fbslot1, uint16_t fbslot2) 
-: ServoSwitch(confpin, pin, address, pos1, pos2, speed, powerpin, fbslot1, fbslot2) {
+: ServoSwitch(confpin, pin, address, pos1, pos2, speed, powerpin, fbslot1, fbslot2), pca(_pca) {
 	// Convert microseconds to pca ticks. i.e. position / PULSELENGTH
-	pos1 = pos1 / PULSELENGTH;
-	pos2 = pos2 / PULSELENGTH;
+	_straight = pos1 / 4.069;
+	_turnout = pos2 / 4.069;
 };
 
 bool PCA9685Servo::update () {
@@ -42,12 +42,12 @@ bool PCA9685Servo::update () {
 	_currentdelay++;
   if (_opstate == MOVE){
 	   if (_currentdelay > 250) {
-		     //DEBUG("Moving to");
+		   DEBUG("Moving to");
 		     _currentpos = _currentpos + _currentspeed;
     	   //_servo.writeMicroseconds(_currentpos);
-		   //pca.
-		    //DEBUG(_currentpos);
-		    //DEBUG("\n");
+			 pca->setPWM(_pin, 0, _currentpos);
+			 DEBUG(_currentpos);
+			 DEBUG("\n");
 		    _currentdelay = 0;
         if (_currentspeed == 0 && (_targetpos == _currentpos)) {
           _currentspeed = 1;
@@ -66,4 +66,27 @@ bool PCA9685Servo::update () {
   return false;
 };
 
+void PCA9685Servo::print(){
+
+  DEBUG("PCA9685 Pin: ");
+  DEBUG(_pin);
+  DEBUG(" Straight: ");
+  DEBUG(_straight);
+  DEBUG(" Turnout: ");
+  DEBUG(_turnout);
+  DEBUG(" Address: ");
+  DEBUG(_address);
+  DEBUG(" Speed: ");
+  DEBUG(_speed);
+  
+  DEBUG(" Feedback slot 1: ");
+  DEBUG(_fbslot1);
+  DEBUG(" Feedback slot 2: ");
+  DEBUG(_fbslot2);
+
+  DEBUG(" Power slot: ");
+  DEBUG(_powerpin);
+
+  DEBUG("\n");
+};
 		

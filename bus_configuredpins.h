@@ -24,6 +24,7 @@ class PCA9685Servo : public ServoSwitch {
 	public:
 		PCA9685Servo(Adafruit_PWMServoDriver* _pca, uint8_t confpin, uint8_t pin, uint16_t address, uint16_t pos1, uint16_t pos2, uint16_t speed, uint8_t powerpin, uint16_t fbslot1, uint16_t fbslot2);
 		bool update();
+		void print();
 	};
 	
 	
