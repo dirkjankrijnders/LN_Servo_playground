@@ -27,6 +27,31 @@ PCA9685Servo::PCA9685Servo(Adafruit_PWMServoDriver* _pca, uint8_t confpin, uint8
 	_turnout = pos2 / 4.069;
 };
 
+
+void PCA9685Servo::set_pin_cv(uint8_t PinCv, uint16_t value) {
+	switch (PinCv) {
+		case 0: // Arduino Pin
+			_pin = value;
+			break;
+		case 1: // Address
+			_address = value;
+			break;
+		case 2: // Pos 1
+			_straight = value / 4.069;
+			DEBUG("Straight is now: ");
+			DEBUGLN(_straight);
+			set(0, 0);
+			break;
+		case 3: // Pos 2
+			_turnout = value / 4.069;
+			set(1, 0);
+			break;
+		case 4: // Speed
+			_speed = value;
+			break;
+	}
+	
+}
 bool PCA9685Servo::update () {
   if (_opstate == STOP ) {
     return false;
