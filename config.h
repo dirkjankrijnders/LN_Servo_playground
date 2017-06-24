@@ -21,4 +21,7 @@ without computer connected this line should be commented out.
 #define PINSERVO 0
 #endif
 
+#ifndef TLC_SUPPORT
+#define TLC_SUPPORT 0
+#endif
 #endif // CONFIG_H
