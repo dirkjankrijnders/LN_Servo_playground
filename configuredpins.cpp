@@ -41,20 +41,24 @@ void ServoSwitch::reportSwitch(){
 #define DEBUG(x) Serial.print(x)
 #endif
 
-    InputPin::InputPin(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){
-		if (_pin > 15)
-			_pin = 15;
+    InputPin::InputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool report_inverse, uint16_t secondary_address) : ConfiguredPin(confpin, pin, address){
+		if (_pin > 254)
+			_pin = 254;
 		pinMode(_pin, INPUT_PULLUP);
 		_state = 0;
 		_laststate = 1;
+		_report_inverse = report_inverse;
+		_secondary_address= secondary_address;
 	};
-    void InputPin::print() {DEBUG("Input pin ");DEBUG(_pin);DEBUG("\n");};
+    void InputPin::print() {DEBUG("Input pin ");DEBUG(_pin);DEBUG(" reporting inverse ");DEBUG(_report_inverse);DEBUG(" on ");DEBUG(_secondary_address)DEBUG("\n");};
     bool InputPin::update() {
 		if (_pin > 0)
 		  _state = digitalRead(_pin);
       //DEBUG(state);
       if (_state != _laststate) {
         reportSensor(_address, _state);
+		if (_report_inverse)
+			reportSensor(_secondary_address, !_state);
         DEBUG("State pin ");
         DEBUG(_pin);
         DEBUG(" changed to ");
@@ -243,15 +247,16 @@ ServoSwitch::~ServoSwitch() {
 }
 
 
-OutputPin::OutputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative) : ConfiguredPin(confpin, pin, address){
+OutputPin::OutputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative, bool force_on) : ConfiguredPin(confpin, pin, address){
 	pinMode(_pin, OUTPUT);
 	state = 0;
 	_set(state);
 	_cumulative = cumulative;
 	_accumulator = 0;
+	_force_on = force_on;
 };
 
-void OutputPin::print() {DEBUG("Output pin ");DEBUG(_pin);DEBUG("\n");};
+void OutputPin::print() {DEBUG("Output pin ");DEBUG(_pin);DEBUG(" force_on: "); DEBUG(_force_on);DEBUG("\n");};
 
 bool OutputPin::update() {return false;};
 
@@ -276,6 +281,13 @@ void OutputPin::set(bool port, bool _state) {
 };
 
 void OutputPin::_set(bool state) {
+	if (_force_on)
+		state = true;
+	DEBUG("Output pin ");
+	DEBUG(_pin);
+	DEBUG(" to state: ");
+	DEBUG(_force_on);
+	DEBUG("\n");
 	digitalWrite(_pin, state);
 };
 

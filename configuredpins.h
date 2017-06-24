@@ -30,17 +30,19 @@ class ConfiguredPin{
 
 class InputPin : public ConfiguredPin {
   public:
-    InputPin(uint8_t confpin, uint8_t pin, uint16_t address);
+    InputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool report_inverse = 0, uint16_t secondary_address = 0);
 	void set(bool force, bool state);
     void print();
     bool update();
     bool _state;
     bool _laststate;
+	uint16_t _secondary_address;
+	bool _report_inverse;
 };
 
 class OutputPin : public ConfiguredPin {
 public:
-    OutputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative = 0);
+    OutputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative = 0, bool force_on = 0);
     void print();
     bool update();
     bool state;
@@ -49,6 +51,7 @@ public:
 	void toggle();
 private:
   bool _cumulative;
+  bool _force_on;
   int8_t _accumulator;
 };
 

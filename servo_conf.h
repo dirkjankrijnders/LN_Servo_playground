@@ -33,7 +33,8 @@ typedef struct led_conf {
 typedef struct input_conf {
 	uint16_t arduinopin;
 	uint16_t address;
-	uint16_t func;
+	uint16_t options;
+	uint16_t secadd;
 } __attribute__((packed)) input_conf_t;
 
 typedef struct output_conf {
