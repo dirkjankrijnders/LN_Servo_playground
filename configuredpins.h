@@ -1,7 +1,14 @@
 #ifndef CONFIGURED_PINS_H
 #define CONFIGURED_PINS_H
 
-#include <Servo.h>
+#include "config.h"
+#include <stdint.h>
+
+#if PINSERVO == 1
+#warning "USING SERVO"
+  #include <Servo.h>
+#endif
+
 
 extern void reportSwitch(uint16_t address, uint16_t _state);
 extern void reportSensor(uint16_t address, bool _state);
@@ -76,14 +83,16 @@ class ServoSwitch : public ConfiguredPin {
 	uint16_t _fbslot1;
 	uint16_t _fbslot2;
     bool _state;
+#if PINSERVO
     Servo _servo;
+#endif
 	void reportSwitch();
 	typedef enum {
 		START = 0,
 		MOVE,
 		STOP
 	} states;
-  private:
+  protected:
 	uint16_t _currentpos;
 	uint16_t _targetpos;
 	int16_t _currentspeed;
