@@ -1,5 +1,6 @@
 #include <configuredpins.h>
 #include <Arduino.h>
+#include "config.h"
 
 void ServoSwitch::reportSwitch(){
 #ifdef DS54
@@ -40,20 +41,24 @@ void ServoSwitch::reportSwitch(){
 #define DEBUG(x) Serial.print(x)
 #endif
 
-    InputPin::InputPin(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){
-		if (_pin > 15)
-			_pin = 15;
+    InputPin::InputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool report_inverse, uint16_t secondary_address) : ConfiguredPin(confpin, pin, address){
+		if (_pin > 254)
+			_pin = 254;
 		pinMode(_pin, INPUT_PULLUP);
 		_state = 0;
 		_laststate = 1;
+		_report_inverse = report_inverse;
+		_secondary_address= secondary_address;
 	};
-    void InputPin::print() {DEBUG("Input pin ");DEBUG(_pin);DEBUG("\n");};
+    void InputPin::print() {DEBUG("Input pin ");DEBUG(_pin);DEBUG(" reporting inverse ");DEBUG(_report_inverse);DEBUG(" on ");DEBUG(_secondary_address)DEBUG("\n");};
     bool InputPin::update() {
 		if (_pin > 0)
 		  _state = digitalRead(_pin);
       //DEBUG(state);
       if (_state != _laststate) {
         reportSensor(_address, _state);
+		if (_report_inverse)
+			reportSensor(_secondary_address, !_state);
         DEBUG("State pin ");
         DEBUG(_pin);
         DEBUG(" changed to ");
@@ -101,10 +106,14 @@ ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address, uint16_
   _opstate = START;
   };
 
-void ServoSwitch::changepin(uint8_t pin) {_servo.detach(); _pin = pin; _servo.attach(pin);};
+void ServoSwitch::changepin(uint8_t pin) {
+#if PINSERVO
+	_servo.detach(); _pin = pin; _servo.attach(pin);
+#endif //PINSERVO
+};
 
 void ServoSwitch::set(bool dir, bool state) {
-  digitalWrite(_powerpin, HIGH);
+  //digitalWrite(_powerpin, HIGH);
   if (dir){
 	  _targetpos = _turnout;
   } else {
@@ -149,6 +158,7 @@ void ServoSwitch::toggle() {
 };
 
 bool ServoSwitch::update () {
+#if PINSERVO
   if (_opstate == STOP ) {
     return false;
   }
@@ -184,6 +194,7 @@ bool ServoSwitch::update () {
     }
   }
   return false;
+#endif //PINSERVO
 };
 
 void ServoSwitch::print(){
@@ -216,15 +227,18 @@ void ServoSwitch::print_state() {
   } else {
     DEBUG("Thrown");
   }
+#if PINSERVO
   DEBUG(_servo.read());
+#endif //PINSERVO
 };
 
 uint16_t ServoSwitch::get_state() {
 	return _state;
 }
 void ServoSwitch::restore_state(uint16_t state){
+//	set(state, 0);
 	_state = state;
-  digitalWrite(_powerpin, HIGH);
+ // digitalWrite(_powerpin, HIGH);
   if (_state) {
     _targetpos = _turnout;
   } else {
@@ -237,18 +251,22 @@ void ServoSwitch::restore_state(uint16_t state){
 
 ServoSwitch::~ServoSwitch() {
 	DEBUG("Destructor!");
+#if PINSERVO
 	_servo.detach();
+#endif //PINSERVO
 }
 
 
-OutputPin::OutputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative) : ConfiguredPin(confpin, pin, address){
+OutputPin::OutputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative, bool force_on) : ConfiguredPin(confpin, pin, address){
 	pinMode(_pin, OUTPUT);
 	state = 0;
+	_set(state);
 	_cumulative = cumulative;
 	_accumulator = 0;
+	_force_on = force_on;
 };
 
-void OutputPin::print() {DEBUG("Output pin ");DEBUG(_pin);DEBUG("\n");};
+void OutputPin::print() {DEBUG("Output pin ");DEBUG(_pin);DEBUG(" force_on: "); DEBUG(_force_on);DEBUG("\n");};
 
 bool OutputPin::update() {return false;};
 
@@ -269,9 +287,82 @@ void OutputPin::set(bool port, bool _state) {
 	DEBUG("Acc: ");
 	DEBUG(_accumulator);
 	state = port;
+	_set(state);
+};
+
+void OutputPin::_set(bool state) {
+	if (_force_on)
+		state = true;
+	DEBUG("Output pin ");
+	DEBUG(_pin);
+	DEBUG(" to state: ");
+	DEBUG(_force_on);
+	DEBUG("\n");
 	digitalWrite(_pin, state);
 };
 
 void OutputPin::toggle() {
 	set(!state, 1);
 };
+
+DualAction::DualAction(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t actionslot1, uint16_t actionslot2, uint16_t delay, uint16_t options) : ConfiguredPin(confpin, pin, address){
+	_actionslot1 = actionslot1;
+	_actionslot2 = actionslot2;
+	_delay = delay;
+	_state = IDLE;
+};
+
+void DualAction::set(bool port, bool state) {
+	if (port == _portstate) // We're already in this state
+		return;
+	
+	if (_state != IDLE) // We're still busy, ignore command
+		return;
+			
+	_direc = port > _portstate; // If negative we're going in reverse
+	if (_direc > 0) {
+		_state = FIRST;
+		setSlot(_actionslot1, 1);
+	} else {
+		_state = FIRST;
+		setSlot(_actionslot2, 0); // We're reversing, opposite state
+	}
+	if (state == 1)
+		_portstate = port;
+	_lastmilli = millis();
+}
+
+bool DualAction::update() {
+	if (_state == IDLE)
+		return false;
+	
+	if ((millis() - _lastmilli) > _delay) {
+		if (_direc > 0) {
+			if (_state == FIRST) 
+				setSlot(_actionslot2, 1);
+			else
+				setSlot(_actionslot1, 0);
+		} else {
+			if (_state == FIRST) 
+				setSlot(_actionslot1, 0);
+			else
+				setSlot(_actionslot1, 0);
+		}
+		_state = IDLE;
+	}
+	return true;
+}
+
+void DualAction::print() {
+	DEBUG("Dual action slot, address, ");DEBUG(_address);DEBUG("\n");
+	DEBUG("Triggering slots");
+	DEBUG(_actionslot1);
+	DEBUG(" ");
+	DEBUG(_actionslot2);
+	DEBUG("\n");
+};
+
+void DualAction::toggle() {
+	set(!_state, 1);
+};
+

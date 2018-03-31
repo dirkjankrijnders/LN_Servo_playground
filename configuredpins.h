@@ -1,7 +1,14 @@
 #ifndef CONFIGURED_PINS_H
 #define CONFIGURED_PINS_H
 
-#include <Servo.h>
+#include "config.h"
+#include <stdint.h>
+
+#if PINSERVO == 1
+#warning "USING SERVO"
+  #include <Servo.h>
+#endif
+
 
 extern void reportSwitch(uint16_t address, uint16_t _state);
 extern void reportSensor(uint16_t address, bool _state);
@@ -15,6 +22,7 @@ class ConfiguredPin{
     virtual void print() {};
     virtual void toggle() {};
     virtual void set(bool port, bool state) {};
+	virtual void _set(bool state) {};
 	virtual void set_pin_cv(uint16_t PinCv, uint16_t value) {};
     virtual void print_state() {};
     virtual bool update() {return false;};
@@ -29,25 +37,29 @@ class ConfiguredPin{
 
 class InputPin : public ConfiguredPin {
   public:
-    InputPin(uint8_t confpin, uint8_t pin, uint16_t address);
+    InputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool report_inverse = 0, uint16_t secondary_address = 0);
 	void set(bool force, bool state);
     void print();
     bool update();
     bool _state;
     bool _laststate;
+	uint16_t _secondary_address;
+	bool _report_inverse;
 };
 
 class OutputPin : public ConfiguredPin {
 public:
-    OutputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative = 0);
+    OutputPin(uint8_t confpin, uint8_t pin, uint16_t address, bool cumulative = 0, bool force_on = 0);
     void print();
     bool update();
     bool state;
 	void set(bool port, bool state);
+	void _set(bool state);
 	void toggle();
 private:
   bool _cumulative;
-  uint8_t _accumulator;
+  bool _force_on;
+  int8_t _accumulator;
 };
 
 class ServoSwitch : public ConfiguredPin {
@@ -71,14 +83,16 @@ class ServoSwitch : public ConfiguredPin {
 	uint16_t _fbslot1;
 	uint16_t _fbslot2;
     bool _state;
+#if PINSERVO
     Servo _servo;
+#endif
 	void reportSwitch();
 	typedef enum {
 		START = 0,
 		MOVE,
 		STOP
 	} states;
-  private:
+  protected:
 	uint16_t _currentpos;
 	uint16_t _targetpos;
 	int16_t _currentspeed;
@@ -86,4 +100,26 @@ class ServoSwitch : public ConfiguredPin {
   states _opstate;
 };
 
+class DualAction : public ConfiguredPin {
+public:
+	DualAction(uint8_t confpin, uint8_t pin, uint16_t address, uint16_t actionslot1, uint16_t actionslot2, uint16_t delay, uint16_t options);
+    void print();
+    bool update();
+    bool state;
+	void set(bool port, bool state);
+	void toggle();
+private:
+	uint8_t _actionslot1;
+	uint8_t _actionslot2;
+	uint16_t _delay;
+	uint32_t _lastmilli;
+	typedef enum {
+		IDLE = 0,
+		FIRST,
+		SECOND
+	} movestates;
+	movestates _state;
+	bool _portstate;
+	bool _direc;
+};
 #endif
