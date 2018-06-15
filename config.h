@@ -5,8 +5,9 @@ without computer connected this line should be commented out.
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#ifdef DEBUG
 #define DEBUG_OUTPUT
-//#undef DEBUG_OUTPUT
+#endif
 
 #ifdef DEBUG_OUTPUT
 #define USE_SERIAL
