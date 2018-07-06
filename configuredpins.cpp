@@ -75,6 +75,79 @@ void ServoSwitch::reportSwitch(){
 		_state = state;
 	}
 
+MagnetSwitch::MagnetSwitch(uint8_t confpin, uint8_t pin1, uint16_t address, uint16_t pin2, uint16_t duration, uint16_t fbslot1, uint16_t fbslot2) : ConfiguredPin(confpin, pin1, address){
+  _pin2 = pin2;
+  _duration = duration;
+  _fbslot1 = fbslot1;
+  _fbslot2 = fbslot2;  
+  pinMode(_pin, OUTPUT);
+  pinMode(_pin2, OUTPUT);
+  DEBUG("Setting pinModes of: ");
+  DEBUG(_pin);
+  DEBUG(", ");
+  DEBUGLN(_pin2);
+};
+
+void MagnetSwitch::print() {
+  DEBUG("Straight Pin: ");
+  DEBUG(_pin);
+  DEBUG(" Turnout Pin: ");
+  DEBUG(_pin2);
+  DEBUG(" Address: ");
+  DEBUG(_address);
+  DEBUG(" Duration: ");
+  DEBUG(_duration);
+  
+  DEBUG(" Feedback slot 1: ");
+  DEBUG(_fbslot1);
+  DEBUG(" Feedback slot 2: ");
+  DEBUG(_fbslot2);
+
+};
+
+void MagnetSwitch::print_state() {
+  if (_state) {
+    DEBUG("Straight");
+  } else {
+    DEBUG("Thrown");
+  }
+};
+
+void MagnetSwitch::set(bool dir, bool state) {
+  _state = dir;
+  _timer = millis();
+  pinMode(_pin, OUTPUT);
+  pinMode(_pin2, OUTPUT);
+  DEBUG("Energize");
+  if (dir) {
+    digitalWrite(_pin2, LOW);
+    digitalWrite(_pin, HIGH);
+    DEBUGLN(_pin);
+  } else {
+    digitalWrite(_pin, LOW);
+    digitalWrite(_pin2, HIGH);
+    DEBUGLN(_pin2);
+  }
+}
+
+bool MagnetSwitch::update() {
+  if (_timer > 0) {
+    if (millis() - _timer > _duration) {
+      DEBUGLN("Deenergize")
+      _timer = 0;
+      digitalWrite(_pin, LOW);
+      digitalWrite(_pin2, LOW);
+      return false;   
+    }
+    return true;
+  }
+  return false;
+}
+
+MagnetSwitch::~MagnetSwitch(){
+  DEBUG("Magnet switch destructor");
+}
+
 ServoSwitch::ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address) : ConfiguredPin(confpin, pin, address){
 	_straight = 1500;
 	_turnout = 1500;
@@ -193,8 +266,8 @@ bool ServoSwitch::update () {
       return true;
     }
   }
-  return false;
 #endif //PINSERVO
+  return false;
 };
 
 void ServoSwitch::print(){

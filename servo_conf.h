@@ -20,6 +20,17 @@ typedef struct servo_conf {
 	uint16_t pwrslot;
 } __attribute__((packed)) servo_conf_t;
 
+typedef struct switch_conf {
+	uint16_t arduinopin;
+	uint16_t address;
+  uint16_t arduinopin2;
+  uint16_t duration;
+	uint16_t state;
+	uint16_t fbslot1;
+	uint16_t fbslot2;
+  
+} __attribute__((packed)) magnet_switch_conf_t;
+
 typedef struct led_conf {
 	uint16_t arduinopin;
 	uint16_t address;
@@ -61,6 +72,7 @@ typedef union conf {
 	input_conf_t input;
 	output_conf_t output;
 	dualaction_conf_t dualaction;
+  magnet_switch_conf_t magnet;
 } __attribute__((packed)) conf_t;
 
 

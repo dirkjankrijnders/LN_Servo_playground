@@ -62,6 +62,22 @@ private:
   int8_t _accumulator;
 };
 
+class MagnetSwitch : public ConfiguredPin {
+public:
+  MagnetSwitch(uint8_t confpin, uint8_t pin1, uint16_t address, uint16_t pin2, uint16_t duration, uint16_t fbslot1, uint16_t fbslot2);
+  ~MagnetSwitch();
+  void print();
+  void print_state();
+  void set(bool dir, bool state);
+  bool update ();
+	uint16_t _pin2;
+	uint16_t _duration;
+	uint16_t _fbslot1;
+	uint16_t _fbslot2;
+	uint16_t _timer;
+  bool _state;
+};
+
 class ServoSwitch : public ConfiguredPin {
   public:
     ServoSwitch(uint8_t confpin, uint8_t pin, uint16_t address);
