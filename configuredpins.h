@@ -74,7 +74,7 @@ public:
 	uint16_t _duration;
 	uint16_t _fbslot1;
 	uint16_t _fbslot2;
-	uint16_t _timer;
+	unsigned long _timer;
   bool _state;
 };
 
