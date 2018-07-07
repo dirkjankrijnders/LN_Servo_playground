@@ -50,7 +50,7 @@ void ServoSwitch::reportSwitch(){
 		_report_inverse = report_inverse;
 		_secondary_address= secondary_address;
 	};
-    void InputPin::print() {DEBUG("Input pin ");DEBUG(_pin);DEBUG(" reporting inverse ");DEBUG(_report_inverse);DEBUG(" on ");DEBUG(_secondary_address)DEBUG("\n");};
+    void InputPin::print() {DEBUG("Input pin ");DEBUG(_pin);DEBUG(" on ");DEBUG(_address);DEBUG(" reporting inverse ");DEBUG(_report_inverse);DEBUG(" on ");DEBUG(_secondary_address)DEBUG("\n");};
     bool InputPin::update() {
 		if (_pin > 0)
 		  _state = digitalRead(_pin);
@@ -114,6 +114,17 @@ void MagnetSwitch::print_state() {
 };
 
 void MagnetSwitch::set(bool dir, bool state) {
+  if( _state == 0 ) {
+  		reportSlot(_fbslot1, 1);
+  		reportSlot(_fbslot2, 0);
+  		//LocoNet.reportSensor(Address, 1);
+  		//LocoNet.reportSensor(Address+10, 0);		
+  	} else if( _state == 1 ) {
+  		reportSlot(_fbslot1, 0);
+  		reportSlot(_fbslot2, 1);
+  		//LocoNet.reportSensor(Address, 0);
+  		//LocoNet.reportSensor(Address+10, 1);
+  	} 
   _state = dir;
   _timer = millis();
   pinMode(_pin, OUTPUT);
@@ -137,6 +148,17 @@ bool MagnetSwitch::update() {
       _timer = 0;
       digitalWrite(_pin, LOW);
       digitalWrite(_pin2, LOW);
+      if( _state == 0 ) {
+      		reportSlot(_fbslot1, 1);
+      		reportSlot(_fbslot2, 0);
+      		//LocoNet.reportSensor(Address, 1);
+      		//LocoNet.reportSensor(Address+10, 0);		
+      	} else if( _state == 1 ) {
+      		reportSlot(_fbslot1, 0);
+      		reportSlot(_fbslot2, 1);
+      		//LocoNet.reportSensor(Address, 0);
+      		//LocoNet.reportSensor(Address+10, 1);
+      	}
       return false;   
     }
     return true;
